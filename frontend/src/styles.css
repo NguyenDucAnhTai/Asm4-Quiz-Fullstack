@@ -1,0 +1,50 @@
+body {
+  min-height: 100vh;
+  background: #f5f6f8;
+}
+
+.hero-card {
+  background:
+    radial-gradient(circle at top right, rgba(255, 193, 7, 0.35), transparent 35%),
+    #ffffff;
+}
+
+.auth-card {
+  max-width: 430px;
+}
+
+.quiz-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.quiz-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.09) !important;
+}
+
+.answer-option {
+  cursor: pointer;
+  background: #fff;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.answer-option:hover {
+  background: #fff8dd;
+  border-color: #ffc107 !important;
+}
+
+.result-card {
+  max-width: 540px;
+}
+
+.score-circle {
+  width: 150px;
+  height: 150px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #ffc107;
+  color: #111;
+  font-size: 2.2rem;
+  font-weight: 800;
+}
