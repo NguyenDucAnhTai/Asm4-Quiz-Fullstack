@@ -8,6 +8,7 @@ import {
   fetchQuizById,
   fetchQuizzes,
   updateQuestion,
+  updateQuiz,
 } from "../../features/quizzes/quizSlice";
 
 const emptyOptions = () => [
@@ -23,12 +24,16 @@ export default function AdminDashboardPage() {
     (state) => state.quizzes
   );
 
-  const [quizForm, setQuizForm] = useState({
+  const emptyQuizForm = {
     title: "",
     description: "",
     category: "General",
     isPublished: true,
-  });
+  };
+
+  const [editingQuizId, setEditingQuizId] = useState(null);
+
+  const [quizForm, setQuizForm] = useState(emptyQuizForm);
 
   const [questionForm, setQuestionForm] = useState({
     quiz: "",
@@ -76,14 +81,25 @@ export default function AdminDashboardPage() {
 
   const handleCreateQuiz = (event) => {
     event.preventDefault();
-    dispatch(createQuiz(quizForm)).then(() => {
-      setQuizForm({
-        title: "",
-        description: "",
-        category: "General",
-        isPublished: true,
+
+    if (editingQuizId) {
+      dispatch(updateQuiz({ id: editingQuizId, formData: quizForm })).then(() => {
+        setQuizForm(emptyQuizForm);
+        setEditingQuizId(null);
+        dispatch(fetchQuizzes());
       });
+      return;
+    }
+
+    dispatch(createQuiz(quizForm)).then(() => {
+      setQuizForm(emptyQuizForm);
+      dispatch(fetchQuizzes());
     });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingQuizId(null);
+    setQuizForm(emptyQuizForm);
   };
 
   const handleSaveQuestion = (event) => {
@@ -154,7 +170,9 @@ export default function AdminDashboardPage() {
         <div className="col-lg-5">
           <div className="card border-0 shadow-sm">
             <div className="card-body">
-              <h5 className="fw-bold">Create Quiz</h5>
+              <h5 className="fw-bold">
+                {editingQuizId ? "Edit Quiz" : "Create Quiz"}
+              </h5>
               <form onSubmit={handleCreateQuiz}>
                 <div className="mb-3">
                   <label className="form-label">Title</label>
@@ -188,7 +206,21 @@ export default function AdminDashboardPage() {
                   />
                 </div>
 
-                <button className="btn btn-dark w-100">Create Quiz</button>
+                <div className="d-flex gap-2">
+                  <button className="btn btn-dark w-100">
+                    {editingQuizId ? "Update Quiz" : "Create Quiz"}
+                  </button>
+
+                  {editingQuizId && (
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           </div>
@@ -212,12 +244,21 @@ export default function AdminDashboardPage() {
                         {quiz.questions?.length || 0} questions
                       </div>
                     </button>
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => dispatch(deleteQuiz(quiz._id))}
-                    >
-                      Delete
-                    </button>
+                    <div className="d-flex gap-2">
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => handleEditQuiz(quiz)}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => dispatch(deleteQuiz(quiz._id))}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
