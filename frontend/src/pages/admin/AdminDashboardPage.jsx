@@ -96,6 +96,18 @@ export default function AdminDashboardPage() {
       dispatch(fetchQuizzes());
     });
   };
+  const handleEditQuiz = (quiz) => {
+    setEditingQuizId(quiz._id);
+
+    setQuizForm({
+      title: quiz.title || "",
+      description: quiz.description || "",
+      category: quiz.category || "General",
+      isPublished: quiz.isPublished ?? true,
+    });
+
+    setManageQuizId(quiz._id);
+  };
 
   const handleCancelEdit = () => {
     setEditingQuizId(null);
